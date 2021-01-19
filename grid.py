@@ -15,6 +15,7 @@ class Grid:
                            ((400,0), (400,600))] # second vertical line
 
         self.grid = [[0 for x in range(3)] for y in range(3)]
+        # setting grid cube coordinates for search algorithm
         # search directions  N         NW        W       SW       S       SE      E       NE
         self.search_dirs = [(0, -1), (-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1)]
         self.game_over = False
@@ -45,40 +46,60 @@ class Grid:
 
     def is_within_bounds(self, x, y):
         return x >= 0 and x < 3 and y >= 0 and y < 3
-
+    
+    # runs after every click to check if any characters are filled in rows, columns or diagonaly
     def check_grid(self, x, y, player):
+        
+        # start with 1, after one character has been placed 
         count = 1
+        
+        # loop through search directions tuple 
         for index, (dirx, diry) in enumerate(self.search_dirs):
+
+            # From the last placed character X or O, check for boundary and check if the next character is the same character 
             if self.is_within_bounds(x+dirx, y+diry) and self.get_cell_value(x+dirx, y+diry) == player:
+                
+                # if similar character has been found after propagating through the direction tuple, then increment the count
                 count += 1
+                # search in another direction by updating the previous coordinate where similar character was found 
                 xx = x + dirx
                 yy = y + diry
+                
+                # search for the second alike character
                 if self.is_within_bounds(xx+dirx, yy+diry) and self.get_cell_value(xx+dirx, yy+diry) == player:
                     count += 1
+                    # if three similar characters have been found together, exit the loop
                     if count == 3:
                         break
+                # if no similar character os found, try again after 
                 if count < 3:
                     new_dir = 0
                     # mapping the indices to opposite direction: 0-4 1-5 2-6 3-7 4-0 5-1 6-2 7-3
+                    # checking for full row, colum or diagonal fill
+                    # while propagating, we can continue following the direction or we can reverse the direction,
+                    # to avoid this scenerio
+                    #   X|X|-
+                    #   X|-|-
+                    #   -|-|-
                     if index == 0:
-                        new_dir = self.search_dirs[4] # N to S
+                        new_dir = self.search_dirs[4] # reversing from N to S
                     elif index == 1:
-                        new_dir = self.search_dirs[5] # NW to SE
+                        new_dir = self.search_dirs[5] # reversing from  NW to SE
                     elif index == 2:
-                        new_dir = self.search_dirs[6] # W to E
+                        new_dir = self.search_dirs[6] # reversing from  W to E
                     elif index == 3:
-                        new_dir = self.search_dirs[7] # SW to NE
+                        new_dir = self.search_dirs[7] # reversing from  SW to NE
                     elif index == 4:
-                        new_dir = self.search_dirs[0] # S to N
+                        new_dir = self.search_dirs[0] # reversing from S to N
                     elif index == 5:
-                        new_dir = self.search_dirs[1] # SE to NW
+                        new_dir = self.search_dirs[1] # reversing from SE to NW
                     elif index == 6:
-                        new_dir = self.search_dirs[2] # E to W
+                        new_dir = self.search_dirs[2] # reversing from E to W
                     elif index == 7:
-                        new_dir = self.search_dirs[3] # NE to SW
+                        new_dir = self.search_dirs[3] # reversing from NE to SW
 
-                    if self.is_within_bounds(x + new_dir[0], y + new_dir[1]) \
-                            and self.get_cell_value(x + new_dir[0], y + new_dir[1]) == player:
+                    # if two similar characters are found, search for the next character in the same direction or reverse 
+                    if self.is_within_bounds(x + new_dir[0], y + new_dir[1]) and self.get_cell_value(x + new_dir[0], y + new_dir[1]) == player:
                         count += 1
                         if count == 3:
                             break
