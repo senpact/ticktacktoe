@@ -4,9 +4,11 @@ import os
 letterX = pygame.image.load(os.path.join('res', 'letterX.png'))
 letterO = pygame.image.load(os.path.join('res', 'letterO.png'))
 
-
+# creating a class
 class Grid:
+    # class constructor
     def __init__(self):
+        # creating a tuple for grid line positions
         self.grid_lines = [((0,200), (600,200)), # first horizontal line
                            ((0,400), (600,400)), # second horizontal line
                            ((200,0), (200,600)), # first vertical line
@@ -17,7 +19,9 @@ class Grid:
         self.search_dirs = [(0, -1), (-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1)]
         self.game_over = False
 
+# function to draw the lines
     def draw(self, surface):
+        # loop through the lines
         for line in self.grid_lines:
             pygame.draw.line(surface, (200,200,200), line[0], line[1], 2)
 
